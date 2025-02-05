@@ -17,13 +17,14 @@
       <div class="grid-item">
 
         <p>Provide investments frequency: 1-30 days</p>
-        <vue-number-input :min="1" :max="30" placeholder="Transaction intervals" center controls
+        <vue-number-input pattern="[0-9]*" :min="1" :max="30" placeholder="Transaction intervals" center controls
           v-model="investmentRange" class="darkInput"></vue-number-input>
       </div>
 
       <div class="grid-item">
         <p>Enter the investment amount: </p>
-        <vue-number-input placeholder="Enter the amount" v-model="startAmount" class="darkInput"></vue-number-input>
+        <vue-number-input pattern="[0-9]*" placeholder="Enter the amount" v-model="startAmount"
+          class="darkInput"></vue-number-input>
       </div>
 
       <div class="grid-item" v-show="!tabletSize">
@@ -108,7 +109,6 @@ export default {
   components: { customSelect, DatePicker, ProfitTable, VueNumberInput },
 
   mounted() {
-
     this.scrollBtnActive = document.body.scrollHeight > window.innerHeight
 
     window.addEventListener('resize', () => {
@@ -127,6 +127,14 @@ export default {
     });
 
     this.getTop100CurrencyList()
+
+    window.onload = (event) => {
+      let inputs = document.querySelectorAll("input[type='number']");
+
+      inputs.forEach(element => {
+        element.setAttribute("inputmode", "numeric"); // Ensures numeric keyboard on mobile
+      });
+    };
   },
   methods: {
 
@@ -227,19 +235,22 @@ export default {
       this.selectedCurencyChange = false
     },
     getDataRange(el) {
-      let str = el.toString()
-      this.startDate = str.split(',')[0]
-      this.endDate = str.split(',')[1]
+      this.startDate = el[0]
+      this.endDate = el[1]
 
       let date1 = new Date(el[0]);
       let date2 = new Date(el[1]);
+
 
       let Difference_In_Time = date2.getTime() - date1.getTime();
       let Difference_In_Time2 = new Date().getTime() - date2.getTime()
 
 
+
       this.daysRange = Math.round(Difference_In_Time / (1000 * 3600 * 24));
       this.daysRangeToToday = Math.round(Difference_In_Time2 / (1000 * 3600 * 24)) - 1;
+
+
 
       this.fullRange = 0
       this.fullRange = this.daysRange + this.daysRangeToToday + 1
@@ -252,8 +263,7 @@ export default {
         alert("Select currency")
         return
       }
-
-      if (isNaN(this.fullRange) || this.fullRange == 0) {
+      if (isNaN(this.fullRange)) {
         alert("Select date range")
         return
       }
@@ -271,7 +281,7 @@ export default {
       const params = {
         "market": "cadli",
         "instrument": this.instruments,
-        "limit": this.fullRange,
+        "limit": this.fullRange + 1,
         "aggregate": 1,
         "fill": "true",
         "apply_mapping": "true",
@@ -299,8 +309,9 @@ export default {
           const fullMarketHistory = Object.values(Object.values(json)[0]);
           this.todayMarketHistory = fullMarketHistory[fullMarketHistory.length - 1]
 
+
           this.todaysPrice = (this.todayMarketHistory.HIGH + this.todayMarketHistory.LOW) / 2
-          this.rangeMarket = fullMarketHistory.splice(0, this.daysRange + 1)
+          this.rangeMarket = fullMarketHistory.splice(0, (this.daysRange + 1))
           this.getAllInvestmentData()
         })
       this.scrollBtnActive = true
@@ -318,6 +329,7 @@ export default {
       }
       this.paymentsCount = 0
       this.paymentsCount = Math.floor(this.daysRange / this.investmentRange) + 1
+
       for (let i = 0; i < this.rangeMarket.length; i += this.investmentRange)
         this.calculateInvastmentDate(this.rangeMarket[i])
       this.totalInvestments.AvarageIntialPrice = this.totalInvestments.AvarageIntialPrice / this.paymentsCount

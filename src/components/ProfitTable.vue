@@ -16,7 +16,7 @@
                     <td>{{ el.currency }}</td>
                     <td>{{ (el.price > 1 ? (el.price).toFixed(3) : el.price.toPrecision(3)) }}</td>
                     <td>{{ (todayData > 1 ? (todayData).toFixed(3) : todayData.toPrecision(3)) }}</td>
-                    <td>{{ (el.amount).toFixed(3) }}</td>
+                    <td>{{ (el.amount > 1 ? (el.amount).toFixed(3) : el.amount.toPrecision(3)) }}</td>
                     <td>{{ el.date }}</td>
                     <td>{{ (el.profit).toFixed(3) }}</td>
                 </tr>
@@ -33,8 +33,6 @@
 
                     <th>Spend (USD)</th>
                     <th>Total Profit (USD)</th>
-                    <!-- <th>Total Profit (%)</th> -->
-
                 </tr>
             </thead>
             <tbody>
@@ -45,7 +43,6 @@
                         totalData.AvarageIntialPrice.toPrecision(3)) }} </td>
                     <td>{{ totalData.TotalPrice.toFixed(3) }}</td>
                     <td>{{ totalData.TotalProfit.toFixed(3) }}</td>
-                    <!-- <td>{{ (totalData.TotalProfit / 100).toFixed(3) }}</td> -->
                 </tr>
 
             </tbody>

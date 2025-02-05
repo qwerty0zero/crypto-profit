@@ -1,6 +1,9 @@
 <template>
   <VueDatePicker v-model="date" :datk="true" :min-date="minRange" :max-date="new Date()" model-auto range
-    model-type="MM-dd-yyyy" :enable-time-picker="false" @update:model-value="handleDate" placeholder="Choose data">
+    model-type="yyyy-MM-dd" :enable-time-picker="false" @update:model-value="handleDate" placeholder="Choose data">
+    <!-- <template #dp-input="{ value, isMenuOpen }">
+      <input type="text" readonly :value="value" :class="{ '': isMenuOpen }" class="" />
+    </template> -->
   </VueDatePicker>
 </template>
 
